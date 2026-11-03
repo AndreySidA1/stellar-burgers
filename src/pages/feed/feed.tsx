@@ -1,19 +1,40 @@
-import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-
-import type { TOrder } from '@utils-types';
+import { Preloader } from '@ui';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from '../../services/store';
+import { fetchFeeds } from '../../services/slices/feedSlice';
 
 export const Feed = (): React.JSX.Element => {
-  // TODO: Взять переменную из стора
-  const orders: TOrder[] = [];
+  const dispatch = useDispatch();
 
-  const handleGetFeeds = (): void => {
-    // TODO: Запросить ленту заказов
-  };
+  const orders = useSelector((state) => state.feed.orders);
+  const isLoading = useSelector((state) => state.feed.isLoading);
+  const error = useSelector((state) => state.feed.error);
 
-  if (!orders.length) {
+  useEffect(() => {
+    dispatch(fetchFeeds());
+  }, [dispatch]);
+
+  if (isLoading) {
     return <Preloader />;
   }
 
-  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
+  if (error) {
+    return (
+      <div className="text text_type_main-medium mt-10" style={{ textAlign: 'center', color: 'red' }}>
+        Не удалось загрузить ленту заказов.<br/>
+        Ошибка: {error}
+      </div>
+    );
+  }
+
+  if (!orders.length) {
+    return (
+      <div className="text text_type_main-medium mt-10" style={{ textAlign: 'center' }}>
+        Лента заказов пуста
+      </div>
+    );
+  }
+
+  return <FeedUI orders={orders} handleGetFeeds={() => dispatch(fetchFeeds())} />;
 };
