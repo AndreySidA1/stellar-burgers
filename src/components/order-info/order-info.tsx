@@ -1,23 +1,24 @@
 import { Preloader, OrderInfoUI } from '@ui';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from '../../services/store';
+import { useParams } from 'react-router-dom';
+import { fetchOrderByNumber } from '../../services/slices/feedSlice';
 
 import type { TIngredient } from '@utils-types';
 
 export const OrderInfo = (): React.JSX.Element => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0,
-  };
+  const dispatch = useDispatch();
+  const { number } = useParams<{ number: string }>();
 
-  const ingredients: TIngredient[] = [];
+  const orderData = useSelector((state) => state.feed.currentOrder);
+  const ingredients: TIngredient[] = useSelector((state) => state.ingredients.ingredients);
 
-  /* Готовим данные для отображения */
+  useEffect(() => {
+    if (number && (!orderData || orderData.number !== Number(number))) {
+      dispatch(fetchOrderByNumber(Number(number)));
+    }
+  }, [number, dispatch, orderData]);
+
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -61,5 +62,12 @@ export const OrderInfo = (): React.JSX.Element => {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  return (
+    <>
+      <p className="text text_type_digits-default" style={{ textAlign: 'center' }}>
+        #{number}
+      </p>
+      <OrderInfoUI orderInfo={orderInfo} />
+    </>
+  );
 };
