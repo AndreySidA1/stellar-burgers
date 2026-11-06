@@ -62,6 +62,8 @@ const AppContent = ({
   error,
 }: AppContentProps): React.JSX.Element => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const handleCloseModal = () => navigate(-1);
 
   if (isLoading) {
     return <Preloader />;
@@ -147,7 +149,20 @@ const AppContent = ({
           }
         />
 
-        <Route path="/ingredients/:id" element={<IngredientDetails />} />
+        <Route
+          path="/ingredients/:id"
+          element={
+            <div>
+              <h1
+                className="text text_type_main-large mt-10 mb-6"
+                style={{ textAlign: 'center' }}
+              >
+                Детали ингредиента
+              </h1>
+              <IngredientDetails />
+            </div>
+          }
+        />
         <Route path="*" element={<NotFound404 />} />
       </Routes>
 
@@ -156,25 +171,25 @@ const AppContent = ({
           <Route
             path="/feed/:number"
             element={
-              <ModalWrapper>
+              <Modal title="" onClose={handleCloseModal}>
                 <OrderInfo />
-              </ModalWrapper>
+              </Modal>
             }
           />
           <Route
             path="/ingredients/:id"
             element={
-              <ModalWrapper>
+              <Modal title="Детали ингредиента" onClose={handleCloseModal}>
                 <IngredientDetails />
-              </ModalWrapper>
+              </Modal>
             }
           />
           <Route
             path="/profile/orders/:number"
             element={
-              <ModalWrapper>
+              <Modal title="" onClose={handleCloseModal}>
                 <OrderInfo />
-              </ModalWrapper>
+              </Modal>
             }
           />
         </Routes>
@@ -183,8 +198,3 @@ const AppContent = ({
   );
 };
 
-const ModalWrapper = ({ children }: { children: React.ReactNode }): React.JSX.Element => {
-  const navigate = useNavigate();
-  const handleClose = () => navigate(-1);
-  return <Modal title="" onClose={handleClose}>{children}</Modal>;
-};
