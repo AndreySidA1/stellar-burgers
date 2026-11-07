@@ -62,7 +62,7 @@ export const AppHeaderUI = ({
 
       <div className={styles.link_position_last}>
         <NavLink
-          to={userName ? '/profile' : '/login'}
+          to="/profile"
           className={({ isActive }) =>
             `text text_type_main-medium text_color_inactive pt-4 pb-4 ${
               styles.link

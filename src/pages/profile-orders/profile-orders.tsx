@@ -3,13 +3,8 @@ import { Preloader } from '@ui';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from '../../services/store';
 import { fetchUserOrders } from '../../services/slices/feedSlice';
-import { getCookie } from '../../utils/cookie';
 
 import type { TOrder } from '@utils-types';
-
-interface IWSMessage {
-  success: boolean;
-}
 
 export const ProfileOrders = (): React.JSX.Element => {
   const dispatch = useDispatch();
@@ -18,23 +13,8 @@ export const ProfileOrders = (): React.JSX.Element => {
   const isLoading = useSelector((state) => state.feed.userOrdersLoading);
 
   useEffect(() => {
-    dispatch(fetchUserOrders());
+    void dispatch(fetchUserOrders());
 
-    const token = getCookie('accessToken');
-    if (token) {
-      const ws = new WebSocket(`wss://norma.nomoreparties.space/orders?token=${token}`);
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data) as IWSMessage;
-        if (data.success) {
-          dispatch(fetchUserOrders());
-        }
-      };
-
-      return () => {
-        ws.close();
-      };
-    }
   }, [dispatch]);
 
   if (isLoading) {

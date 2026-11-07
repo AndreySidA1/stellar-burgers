@@ -11,10 +11,9 @@ export const IngredientsCategory = ({
   ingredients,
   ref,
 }: TIngredientsCategoryProps): React.JSX.Element => {
-  const burgerConstructor: TConstructorState = useSelector((state) => ({
-    bun: state.burgerConstructor.bun,
-    ingredients: state.burgerConstructor.ingredients,
-  }));
+  const burgerConstructor: TConstructorState = useSelector(
+    (state) => state.burgerConstructor
+  );
 
   const ingredientsCounters = useMemo(() => {
     const { bun, ingredients: constructorIngredients } = burgerConstructor;

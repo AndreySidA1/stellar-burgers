@@ -9,10 +9,9 @@ export const BurgerConstructor = (): React.JSX.Element | null => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const constructorItems: TConstructorState = useSelector((state) => ({
-    bun: state.burgerConstructor.bun,
-    ingredients: state.burgerConstructor.ingredients,
-  }));
+  const constructorItems: TConstructorState = useSelector(
+    (state) => state.burgerConstructor
+  );
   const orderRequest = useSelector((state) => state.burgerConstructor.orderRequest);
   const orderModalData = useSelector((state) => state.burgerConstructor.orderModalData);
   const user = useSelector((state) => state.user.user);
