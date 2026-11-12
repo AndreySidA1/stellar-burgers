@@ -4,6 +4,8 @@ const config: Config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
+  collectCoverageFrom: ['src/services/slices/{ingredientsSlice,constructorSlice}.ts'],
+  coverageDirectory: '<rootDir>/coverage',
   testMatch: ['**/*.test.ts'],
   moduleNameMapper: {
     '^@api$': '<rootDir>/src/utils/burger-api',

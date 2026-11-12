@@ -22,7 +22,8 @@
     "test:storybook": "test-storybook",
     "storybook:test": "start-server-and-test storybook http://localhost:6006 test-storybook",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
