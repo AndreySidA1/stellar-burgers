@@ -21,10 +21,14 @@ describe('burgerConstructor reducer', () => {
     expect(reducer(populated, addIngredient({ ...bun, name: 'Новая булка' })).bun?.name).toBe('Новая булка');
   });
   it('добавляет начинку с уникальным id', () => {
-    const state = reducer(initial, addIngredient(filling));
-    expect(state.ingredients).toHaveLength(1);
-    expect(state.ingredients[0]).toEqual(expect.objectContaining(filling));
-    expect(state.ingredients[0].id).toEqual(expect.any(String));
+    const firstState = reducer(initial, addIngredient(filling));
+    const secondState = reducer(firstState, addIngredient(filling));
+    expect(secondState.ingredients).toHaveLength(2);
+    expect(secondState.ingredients[0]).toEqual(expect.objectContaining(filling));
+    expect(secondState.ingredients[1]).toEqual(expect.objectContaining(filling));
+    expect(secondState.ingredients[0].id).toEqual(expect.any(String));
+    expect(secondState.ingredients[1].id).toEqual(expect.any(String));
+    expect(secondState.ingredients[0].id).not.toBe(secondState.ingredients[1].id);
   });
   it('удаляет начинку по id', () => {
     expect(reducer(populated, removeIngredient('first')).ingredients).toEqual([second]);
@@ -36,8 +40,10 @@ describe('burgerConstructor reducer', () => {
     expect(reducer(populated, moveIngredient({ index: 0, direction: 'down' })).ingredients).toEqual([second, first]);
   });
   it('не перемещает ингредиенты за границы массива', () => {
-    expect(reducer(populated, moveIngredient({ index: 0, direction: 'up' })).ingredients).toEqual([first, second]);
-    expect(reducer(populated, moveIngredient({ index: 1, direction: 'down' })).ingredients).toEqual([first, second]);
+    const third = { ...filling, id: 'third' };
+    const state = { ...populated, ingredients: [first, second, third] };
+    expect(reducer(state, moveIngredient({ index: 0, direction: 'up' })).ingredients).toEqual([first, second, third]);
+    expect(reducer(state, moveIngredient({ index: 2, direction: 'down' })).ingredients).toEqual([first, second, third]);
   });
   it('очищает конструктор', () => {
     expect(reducer(populated, resetConstructor())).toEqual(initial);

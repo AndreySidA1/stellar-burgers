@@ -4,11 +4,11 @@ const bun = 'Тестовая булка';
 const filling = 'Тестовая начинка';
 const sauce = 'Тестовый соус';
 
-async function add(page: Page, id: string) {
+async function add(page: Page, id: string): Promise<void> {
   await page.getByTestId(`ingredient-${id}`).getByRole('button', { name: 'Добавить' }).click();
 }
 
-async function assemble(page: Page) {
+async function assemble(page: Page): Promise<void> {
   await add(page, 'test-bun-1');
   await add(page, 'test-main-1');
   await add(page, 'test-sauce-1');
@@ -78,7 +78,14 @@ test.describe('Модальное окно ингредиента', () => {
 test.describe('Оформление заказа', () => {
   test('показывает номер заказа, очищает конструктор и закрывает окно', async ({ page }) => {
     await assemble(page);
+    const orderRequestPromise = page.waitForRequest(
+      (request) => request.method() === 'POST' && new URL(request.url()).pathname === '/api/orders'
+    );
     await page.getByRole('button', { name: 'Оформить заказ' }).click();
+    const orderRequest = await orderRequestPromise;
+    expect(orderRequest.postDataJSON()).toEqual({
+      ingredients: ['test-bun-1', 'test-main-1', 'test-sauce-1', 'test-bun-1']
+    });
     await expect(page.getByTestId('modal')).toBeVisible();
     await expect(page.getByTestId('order-number')).toHaveText('12345');
     await expect(page.getByTestId('constructor-bun-1')).toHaveCount(0);
